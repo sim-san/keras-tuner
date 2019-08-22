@@ -111,10 +111,10 @@ class Display(object):
             trial.summary()
 
         # execution info if needed
-        if trial.max_executions > 1:
+        if trial.num_executions > 1:
             display.subsection('Execution %d/%d' %
                                (len(trial.executions),
-                                trial.max_executions))
+                                trial.num_executions))
 
     def on_trial_end(self,
                      averaged_metrics,

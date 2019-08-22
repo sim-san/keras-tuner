@@ -32,13 +32,14 @@ class Trial(object):
     def __init__(self,
                  trial_id,
                  hyperparameters,
-                 max_executions,
+                 num_executions=1,
                  base_directory='.'):
         self.trial_id = trial_id
         self.hyperparameters = hyperparameters
-        self.max_executions = max_executions
+        self.num_executions = num_executions
         self.base_directory = base_directory
 
+        # Average of per-epoch metrcics over multiple executions.
         self.averaged_metrics = metrics_tracking.MetricsTracker()
         self.score = None
         self.executions = []
@@ -60,7 +61,7 @@ class Trial(object):
         return {
             'trial_id': self.trial_id,
             'hyperparameters': self.hyperparameters.get_config(),
-            'max_executions': self.max_executions,
+            'num_executions': self.num_executions,
             'base_directory': self.base_directory,
             'averaged_metrics': self.averaged_metrics.get_config(),
             'score': self.score,
@@ -86,7 +87,7 @@ class Trial(object):
         trial = cls(
             trial_id=state['trial_id'],
             hyperparameters=hp,
-            max_executions=state['max_executions'],
+            num_executions=state['num_executions'],
             base_directory=state['base_directory']
         )
         trial.score = state['score']

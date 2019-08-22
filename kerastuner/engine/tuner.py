@@ -215,7 +215,7 @@ class Tuner(object):
             trial = trial_module.Trial(
                 trial_id=trial_id,
                 hyperparameters=hp.copy(),
-                max_executions=self.executions_per_trial,
+                num_executions=self.executions_per_trial,
                 base_directory=self._host.results_dir
             )
             self.trials.append(trial)
@@ -235,10 +235,11 @@ class Tuner(object):
                 fit_args, fit_kwargs)
             fit_kwargs['verbose'] = 0
 
-            # Get model; this will reset the Keras session
             if not self.tune_new_entries:
+                # Make copy of hp to avoid mutating it
                 hp = hp.copy()
 
+            # Get model; this will reset the Keras session
             model = self._build_model(hp)
             self._compile_model(model)
 
