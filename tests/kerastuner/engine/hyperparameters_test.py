@@ -182,6 +182,20 @@ def test_get_with_conditional_scopes():
     assert hp.get('b') == 4
 
 
+def test_merge_inactive_hp_with_conditional_scopes():
+    hp = hp_module.HyperParameters()
+    hp.Choice('a', [1, 2, 3], default=3)
+    assert hp.get('a') == 3
+    with hp.conditional_scope('a', 2):
+        hp.Fixed('b', 4)
+
+    hp2 = hp_module.HyperParameters()
+    hp2.merge(hp)
+    # only active hp should be included to values
+    assert 'a' in hp2.values
+    assert 'b' not in hp2.values
+
+
 def test_Choice():
     choice = hp_module.Choice('choice', [1, 2, 3], default=2)
     choice = hp_module.Choice.from_config(choice.get_config())
@@ -345,6 +359,26 @@ def test_Fixed():
     fixed = hp_module.Fixed.from_config(fixed.get_config())
     assert fixed.default == 'value'
     assert fixed.random_sample() == 'value'
+
+    fixed = hp_module.Fixed('fixed', True)
+    assert fixed.default is True
+    assert fixed.random_sample() is True
+
+    fixed = hp_module.Fixed('fixed', False)
+    fixed = hp_module.Fixed.from_config(fixed.get_config())
+    assert fixed.default is False
+    assert fixed.random_sample() is False
+
+    fixed = hp_module.Fixed('fixed', 1)
+    assert fixed.value == 1
+    assert fixed.random_sample() == 1
+
+    fixed = hp_module.Fixed('fixed', 8.2)
+    assert fixed.value == 8.2
+    assert fixed.random_sample() == 8.2
+
+    with pytest.raises(ValueError, match='value must be an'):
+        hp_module.Fixed('fixed', None)
 
 
 def test_merge():

@@ -154,8 +154,8 @@ from kerastuner import HyperModel
 
 class MyHyperModel(HyperModel):
 
-    def __init__(self, num_classes):
-        self.num_classes = num_classes
+    def __init__(self, classes):
+        self.classes = classes
 
     def build(self, hp):
         model = keras.Sequential()
@@ -164,7 +164,7 @@ class MyHyperModel(HyperModel):
                                             max_value=512,
                                             step=32),
                                activation='relu'))
-        model.add(layers.Dense(self.num_classes, activation='softmax'))
+        model.add(layers.Dense(self.classes, activation='softmax'))
         model.compile(
             optimizer=keras.optimizers.Adam(
                 hp.Choice('learning_rate',
@@ -174,7 +174,7 @@ class MyHyperModel(HyperModel):
         return model
 
 
-hypermodel = MyHyperModel(num_classes=10)
+hypermodel = MyHyperModel(classes=10)
 
 tuner = RandomSearch(
     hypermodel,
@@ -198,7 +198,7 @@ They come pre-compiled with `loss="categorical_crossentropy"` and `metrics=["acc
 from kerastuner.applications import HyperResNet
 from kerastuner.tuners import Hyperband
 
-hypermodel = HyperResNet(input_shape=(128, 128, 3), num_classes=10)
+hypermodel = HyperResNet(input_shape=(128, 128, 3), classes=10)
 
 tuner = Hyperband(
     hypermodel,
@@ -222,7 +222,7 @@ value gets used.
 ```python
 from kerastuner import HyperParameters
 
-hypermodel = HyperXception(input_shape=(128, 128, 3), num_classes=10)
+hypermodel = HyperXception(input_shape=(128, 128, 3), classes=10)
 
 hp = HyperParameters()
 # This will override the `learning_rate` parameter with your
@@ -270,7 +270,7 @@ Pass a `hyperparameters` argument with a `Fixed` entry (or any number of `Fixed`
 
 
 ```python
-hypermodel = HyperXception(input_shape=(128, 128, 3), num_classes=10)
+hypermodel = HyperXception(input_shape=(128, 128, 3), classes=10)
 
 hp = HyperParameters()
 hp.Fixed('learning_rate', value=1e-4)
@@ -294,7 +294,7 @@ If you have a hypermodel for which you want to change the existing optimizer, lo
 to the tuner constructor:
 
 ```python
-hypermodel = HyperXception(input_shape=(128, 128, 3), num_classes=10)
+hypermodel = HyperXception(input_shape=(128, 128, 3), classes=10)
 
 tuner = Hyperband(
     hypermodel,
@@ -312,4 +312,14 @@ tuner.search(x, y,
 ```
 
 
+## Citation
 
+BibTex entry:
+```bibtex
+@misc{omalley2019kerastuner,
+	title        = {Keras {Tuner}},
+	author       = {O'Malley, Tom and Bursztein, Elie and Long, James and Chollet, Fran\c{c}ois and Jin, Haifeng and Invernizzi, Luca and others},
+	year         = 2019,
+	howpublished = {\url{https://github.com/keras-team/keras-tuner}}
+}
+```
